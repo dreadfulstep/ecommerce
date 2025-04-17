@@ -1,0 +1,80 @@
+{
+  "colours": [
+    {
+      "name": "colours.forest",
+      "value": "forest",
+      "hsl": "120, 60%, 40%",
+      "hue": "120"
+    },
+    {
+      "name": "colours.ocean",
+      "value": "ocean",
+      "hsl": "212, 100%, 50%",
+      "hue": "212"
+    },
+    {
+      "name": "colours.sunset",
+      "value": "sunset",
+      "hsl": "25, 100%, 50%",
+      "hue": "25"
+    },
+    {
+      "name": "colours.lavender",
+      "value": "lavender",
+      "hsl": "270, 60%, 60%",
+      "hue": "270"
+    },
+    {
+      "name": "colours.rose",
+      "value": "rose",
+      "hsl": "350, 80%, 60%",
+      "hue": "350"
+    },
+    {
+      "name": "colours.gold",
+      "value": "gold",
+      "hsl": "45, 100%, 50%",
+      "hue": "45"
+    },
+    {
+      "name": "colours.emerald",
+      "value": "emerald",
+      "hsl": "140, 70%, 45%",
+      "hue": "140"
+    },
+    {
+      "name": "colours.sky",
+      "value": "sky",
+      "hsl": "200, 90%, 55%",
+      "hue": "200"
+    },
+    {
+      "name": "colours.crimson",
+      "value": "crimson",
+      "hsl": "0, 85%, 50%",
+      "hue": "0"
+    },
+    {
+      "name": "colours.amethyst",
+      "value": "amethyst",
+      "hsl": "280, 75%, 55%",
+      "hue": "280"
+    },
+    {
+      "name": "colours.teal",
+      "value": "teal",
+      "hsl": "170, 60%, 50%",
+      "hue": "170"
+    },
+    {
+      "name": "colours.copper",
+      "value": "copper",
+      "hsl": "25, 80%, 40%",
+      "hue": "25"
+    }
+  ],
+  "defaultColor": {
+    "hsl": "212, 100%, 50%",
+    "hue": "212"
+  }
+}
