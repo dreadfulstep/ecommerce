@@ -1,7 +1,7 @@
 import { Languages } from "lucide-react";
 
 const LoadingLanguage = ({ language } : { language: string }) => (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-background/5 pointer-events-none select-none backdrop-blur-sm text-white z-50">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-background/5 pointer-events-none select-none backdrop-blur-xs text-white z-50">
 
         <div className="mb-4">
             <div className="flex items-center gap-2 text-foreground font-heading font-bold text-2xl">
