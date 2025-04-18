@@ -11,14 +11,14 @@ const mainFile = 'index.js';
 const swcConfig = {
   jsc: {
     parser: {
-      syntax: "typescript",
-      tsx: false
+      syntax: 'typescript',
+      tsx: false,
     },
-    target: "es2020"
+    target: 'es2020',
   },
   module: {
-    type: "commonjs"
-  }
+    type: 'commonjs',
+  },
 };
 
 process.env.NODE_ENV = 'development';
@@ -27,15 +27,8 @@ fs.writeFileSync('.swcrc', JSON.stringify(swcConfig, null, 2));
 
 function loadEnv() {
   dotenv.config();
-  return process.env.NODE_ENV || 'development';
+  return 'development';
 }
-
-const envWatcher = chokidar.watch('.env', { persistent: true });
-
-envWatcher.on('change', () => {
-  console.log('\x1b[33m%s\x1b[0m', '⚡️ .env file changed. Reloading environment...');
-  process.env.NODE_ENV = loadEnv();
-});
 
 let server;
 let isCompiling = false;
@@ -54,7 +47,7 @@ function compile() {
   const startTime = performance.now();
 
   return new Promise((resolve, reject) => {
-    exec(`npx swc ${srcDir} -d ${outDir}`, (error, stdout, stderr) => {
+    exec('tsc --build', (error, stdout, stderr) => {
       isCompiling = false;
       const endTime = performance.now();
       const duration = (endTime - startTime).toFixed(0);
@@ -90,16 +83,16 @@ function startServer() {
     process.env.RESTART_COUNT = '0';
   }
 
-  const environment = loadEnv();
+  loadEnv();
   const serverArgs = [path.join(outDir, mainFile), ...args];
 
   server = spawn('node', serverArgs, {
     stdio: 'inherit',
     env: {
       ...process.env,
-      NODE_ENV: environment,
-      RESTART_COUNT: process.env.RESTART_COUNT || '0'
-    }
+      NODE_ENV: 'development',
+      RESTART_COUNT: process.env.RESTART_COUNT || '0',
+    },
   });
 
   server.on('error', (err) => {
@@ -108,41 +101,37 @@ function startServer() {
 
   server.on('exit', (code, signal) => {
     if (signal !== 'SIGTERM') {
-      console.log(`\x1b[31m%s\x1b[0m`, `❌ Server process exited with code ${code}`);
+      console.log('\x1b[31m%s\x1b[0m', `❌ Server process exited with code ${code}`);
     }
   });
-
-  const duration = Date.now() - startTime;
-  console.log('\x1b[32m%s\x1b[0m', `\n🚀 Server ready in ${duration}ms:\n`);
-  console.log(`   ➜ Env:     \x1b[36m${environment}\x1b[0m`);
 }
 
 const watcher = chokidar.watch(srcDir, {
   ignored: /(^|[\/\\])\../,
-  persistent: true
+  persistent: true,
 });
 
-compile().then(startServer).catch(err => {
-  console.error('\x1b[31m%s\x1b[0m', '❌ Initial compilation failed');
+compile().then(startServer).catch((err) => {
+  console.error('\x1b[31m%s\x1b[0m', '❌ Initial compilation failed\n', err);
 });
 
 const originalConsoleLog = console.log;
-console.log = function() {
+console.log = function () {
   const now = new Date();
   const timestamp = `[${now.toLocaleTimeString()}]`;
   originalConsoleLog('\x1b[90m%s\x1b[0m', timestamp, ...arguments);
 };
 
-watcher
-  .on('change', path => {
-    console.log('\x1b[90m%s\x1b[0m', `File changed: ${path}`);
-    compile().then(() => {
-      if (!needsRestart) {
-        startServer();
-      }
-    }).catch(err => {
-      // Error already logged in compile function
-    });
+watcher.on('change', (changedPath) => {
+  console.log('\x1b[90m%s\x1b[0m', `File changed: ${changedPath}`);
+  
+  compile().then(() => {
+    if (!needsRestart) {
+      startServer();
+    }
+  }).catch((err) => {
+    console.error("Compilation error during file change", err);
+  });
 });
 
 process.on('SIGINT', () => {

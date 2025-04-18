@@ -6,15 +6,20 @@ import fs from 'fs';
 
 const PORT = Number(process.env.PORT) || 5050;
 
-let envName : string | null;
+let envName: string | null;
+
 const loadEnv = () => {
   const envFiles = [
-    '.env', 
-    `.env.${process.env.NODE_ENV}`, 
-    `.env.local`, 
-    `.env.production`, 
+    '.env',
+    `.env.${process.env.NODE_ENV}`,
+    `.env.local`,
+    `.env.production`,
     `.env.development`
   ];
+
+  Object.keys(process.env).forEach((key) => {
+    delete process.env[key];
+  });
 
   for (const envFile of envFiles) {
     if (fs.existsSync(envFile)) {
@@ -26,18 +31,25 @@ const loadEnv = () => {
   }
 
   return process.env.NODE_ENV || 'development';
+};
+
+const envWatcher = process.env.NODE_ENV === 'development' 
+  ? chokidar.watch(
+      ['.env', `.env.${process.env.NODE_ENV}`, `.env.local`, `.env.production`],
+      { persistent: true }
+    ) 
+  : null;
+
+if (envWatcher) {
+  envWatcher.on('change', () => {
+    console.log('\x1b[33m%s\x1b[0m', '⚡️ .env file or related environment file changed. Reloading environment...');
+    loadEnv();
+  });
 }
-
-const envWatcher = chokidar.watch(['.env', `.env.${process.env.NODE_ENV}`, `.env.local`, `.env.production`], { persistent: true });
-
-envWatcher.on('change', () => {
-  console.log('\x1b[33m%s\x1b[0m', '⚡️ .env file or related environment file changed. Reloading environment...');
-  process.env.NODE_ENV = loadEnv();
-});
 
 loadEnv();
 
-const start = async () => {  
+const start = async () => {
   const startTime = Date.now();
   const app = createApp();
 
@@ -46,7 +58,7 @@ const start = async () => {
     const duration = Date.now() - startTime;
 
     if (process.env.NODE_ENV !== 'development') {
-      console.clear(); 
+      console.clear();
     }
 
     console.log('\x1b[32m%s\x1b[0m', `\n🚀 Server ready in ${duration}ms:\n`);

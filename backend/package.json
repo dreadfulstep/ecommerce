@@ -13,8 +13,6 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@swc/cli": "^0.7.3",
-    "@swc/core": "^1.11.21",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/node": "^22.14.1",
