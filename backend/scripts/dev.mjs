@@ -115,13 +115,6 @@ compile().then(startServer).catch((err) => {
   console.error('\x1b[31m%s\x1b[0m', '❌ Initial compilation failed\n', err);
 });
 
-const originalConsoleLog = console.log;
-console.log = function () {
-  const now = new Date();
-  const timestamp = `[${now.toLocaleTimeString()}]`;
-  originalConsoleLog('\x1b[90m%s\x1b[0m', timestamp, ...arguments);
-};
-
 watcher.on('change', (changedPath) => {
   console.log('\x1b[90m%s\x1b[0m', `File changed: ${changedPath}`);
   
@@ -135,7 +128,6 @@ watcher.on('change', (changedPath) => {
 });
 
 process.on('SIGINT', () => {
-  console.log('\x1b[36m%s\x1b[0m', '\n👋 Shutting down dev server');
   if (server) server.kill('SIGTERM');
   process.exit(0);
 });
