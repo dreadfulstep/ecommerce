@@ -69,7 +69,6 @@ export default function GitHubProductCreator() {
       }
       
       const res: { data: GitHubResponse } = await response.json();
-      console.log(res.data.repositories)
       setRepos(res.data.repositories);
     } catch {
       setRepos([]);
@@ -101,11 +100,7 @@ export default function GitHubProductCreator() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="border-b border-border p-4">
-        <h1 className="text-2xl font-bold">GitHub Product Creator</h1>
-      </header>
-      
+    <div className="flex flex-col min-h-screen">
       <main className="flex-1 p-6 max-w-6xl mx-auto w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-card p-6 rounded-lg border border-border">
