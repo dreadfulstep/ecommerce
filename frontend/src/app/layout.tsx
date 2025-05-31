@@ -1,33 +1,29 @@
-import { Manrope, Prompt, Inter } from "next/font/google";
+import { Inter, Prompt } from "next/font/google";
 import { generateMetadata } from "@/utils/metadata";
 import { getPrimaryColour, getTheme } from "@/lib/theme";
 import { headers } from "next/headers";
-import { TranslationProvider } from "@/hooks/useTranslate";
-import { getPreferredLanguageFromHeader, loadTranslation } from "@/utils/translate";
-import { Toaster } from "@/components/ui/sonner"
-import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
-import { MissingLangKeys } from "@/components/misc/MissingLangKeys";
+import ClientProviders from "@/components/layout/ClientProviders";
+import Script from "next/script";
 
-const manropeFont = Manrope({ variable: "--font-number", subsets: ["latin"] });
-const promptFont = Prompt({ variable: "--font-heading", weight: "700", subsets: ["latin"] });
+// const manropeFont = Manrope({ variable: "--font-number", subsets: ["latin"] });
+const promptFont = Prompt({
+  variable: "--font-heading",
+  weight: "700",
+  subsets: ["latin"],
+});
 const interFont = Inter({ variable: "--font-text", subsets: ["latin"] });
 
 export const metadata = generateMetadata();
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+const GA_MEASUREMENT_ID = "G-LBCZSBFL5P";
+
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const headersList = await headers();
-  const acceptLanguageHeader = headersList.get("accept-language") || "";
-  const rawIp = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || '0.0.0.0';
-  let ip = rawIp;
-  
-  if (rawIp.includes('::ffff:')) {
-    ip = rawIp.split('::ffff:')[1];
-  }
-  
-  if (ip.includes(',')) {
-    ip = ip.split(',')[0].trim();
-  } 
   const cookieHeader = headersList.get("cookie") || "";
 
   const theme = getTheme(cookieHeader);
@@ -38,39 +34,39 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const lightness = parseInt(hsl.split(",")[2]);
   const primaryForeground = lightness > 40 ? "#000000" : "#FFFFFF";
 
-  const cookies = Object.fromEntries(
-    cookieHeader
-      .split("; ")
-      .map((c) => c.split("="))
-  );
-
-  const cookieLanguage = cookies["language"];
-  const language = cookieLanguage ? cookieLanguage : await getPreferredLanguageFromHeader(acceptLanguageHeader);
-  const translations = await loadTranslation(language as string);
-
   return (
     <html
+      lang="en"
       className={theme ? "dark" : "light"}
-      style={{
-        "--primary": hsl,
-        "--hue": hue,
-        "--primary-rotated": rotatedHslValue,
-        "--primary-foreground": primaryForeground
-      } as React.CSSProperties}
-      data-ip={ip}
+      style={
+        {
+          "--primary": hsl,
+          "--hue": hue,
+          "--primary-rotated": rotatedHslValue,
+          "--primary-foreground": primaryForeground,
+        } as React.CSSProperties
+      }
     >
-      <body className={`${manropeFont.variable} ${promptFont.variable} ${interFont.variable} antialiased`}>
-        <TranslationProvider 
-            devMode={process.env.NODE_ENV === 'development'} 
-            initialLanguage={language as string}
-            initialTranslations={translations}
-        >
-          <TooltipProvider delayDuration={0}>
-            {children}
-            <Toaster theme={theme ? "dark" : "light"} />
-            {process.env.NODE_ENV === 'development' && <MissingLangKeys />}
-          </TooltipProvider>
-        </TranslationProvider>
+      <body className={`${interFont.variable} ${promptFont.variable} antialiased`}>
+        <ClientProviders theme={theme ? "dark" : "light"}>
+          {children}
+        </ClientProviders>
+        <Script
+          strategy="lazyOnload"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        />
+        <Script
+          id="google-analytics-config"
+          strategy="lazyOnload"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_MEASUREMENT_ID}');
+            `,
+          }}
+        />
       </body>
     </html>
   );

@@ -1,4 +1,5 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @theme {
   --color-background: hsl(var(--background));
@@ -45,8 +46,8 @@
   --animate-progress-indeterminate: progress-indeterminate 1.5s infinite linear;
 
   --font-heading: var(--font-heading), sans-serif;
-  --font-text: var(--font-text), sans-serif;
   --font-number: var(--font-number), sans-serif;
+  --font-text: var(--font-text), sans-serif;
 
   @keyframes progress-indeterminate {
     0% {
@@ -55,24 +56,6 @@
     100% {
       transform: translateX(100%);
     }
-  }
-}
-
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
   }
 }
 
@@ -185,12 +168,12 @@
 
 @layer base {
   :root {
-    --hue:210;
+    --hue: 210;
     transition: --hue 0.5s linear;
   }
   .hue-filter {
-    filter: hue-rotate(var(--hue)deg);
-  }  
+    filter: hue-rotate(var(--hue) deg);
+  }
 }
 
 @layer utilities {
@@ -255,7 +238,6 @@
   }
 }
 
-
 @layer base {
   * {
     @apply border-border;
@@ -264,7 +246,7 @@
     @apply bg-background text-foreground;
   }
   button {
-    @apply cursor-pointer
+    @apply cursor-pointer;
   }
 }
 
@@ -289,8 +271,7 @@
   }
 
   .light .bg-grid {
-    background-image:
-      linear-gradient(
+    background-image: linear-gradient(
         to right,
         hsl(var(--foreground) / 0.15) 1px,
         transparent 1px
@@ -299,8 +280,7 @@
   }
 
   .dark .bg-grid {
-    background-image:
-      linear-gradient(
+    background-image: linear-gradient(
         to right,
         hsl(var(--foreground) / 0.1) 1px,
         transparent 1px

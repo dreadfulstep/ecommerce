@@ -1,0 +1,35 @@
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik_proxy
+    command:
+      - "--configFile=/etc/traefik/traefik.yml"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.yml:/etc/traefik/traefik.yml:ro"
+    networks:
+      - traefik_public_net
+
+  nextjs_app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: my_nextjs_service
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nextjs-router.rule=Host(`test.zylolabs.xyz`)"
+      - "traefik.http.routers.nextjs-router.entrypoints=web"
+      - "traefik.http.services.nextjs-service.loadbalancer.server.port=3000"
+    networks:
+      - traefik_public_net
+
+networks:
+  traefik_public_net:
+    driver: bridge

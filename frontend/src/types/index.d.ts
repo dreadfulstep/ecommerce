@@ -13,7 +13,3 @@ export interface ColorOption {
   hsl: string;
   hue: string;
 }
-
-export interface Translations {
-  [key: string]: string | Translations;
-}

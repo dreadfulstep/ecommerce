@@ -1,0 +1,11 @@
+entryPoints:
+  web:
+    address: ":80"
+  
+  websecure:
+    address: ":443"
+
+providers:
+  docker:
+    network: "traefik_public_net"
+    exposedByDefault: false
